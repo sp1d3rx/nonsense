@@ -1,39 +1,41 @@
 import math
 
+
 class CodeRing:
     def __init__(self):
         self.encoded = []
         self.password = []
         pass
-    def encodeChr(self,character):
+
+    def encodeChr(self, character):
         return ord(character)
-    def decodeChr(self,integer):
+
+    def decodeChr(self, integer):
         return chr(integer)
-    def encodeLine(self,line):
+
+    def encodeLine(self, line):
         encMSG = []
         for index, char in enumerate(line):
-            b = ord(char)
-            c = self.password[index%len(self.password)]
-            b = ((b * b) + (c * c))/89
-            encMSG.append(b-97)
+            intEncoded = self.encodeChr(char)
+            mutator = self.password[index % len(self.password)]
+            intEncoded = ((intEncoded * intEncoded) + (mutator * mutator))/89 #89 is prime, makes the number smaller, can mutate some chars due to rounding though. Not an issue in most cases though...
+            encMSG.append(intEncoded-97) #removing prime number to lower the integer values below 256
         return encMSG
-    def decodeLine(self,tupleEnc):
+
+    def decodeLine(self, tupleEnc):
         buff = []
         if self.password == []:
             return "could not decode wihout password"
         for index, char in enumerate(tupleEnc.split(",")):
-            d = int(char)+97
-            d = d * 89
-            c = self.password[index%len(self.password)]
-            c = c * c
-            a = d - c
-            decoded = math.sqrt(a)
-            buff.append(chr(int(decoded)+1))
+            intEncoded = int(char)+97 # adding back
+            intEncoded = intEncoded * 89 
+            mutator = self.password[index % len(self.password)]
+            mutator = mutator * mutator
+            intDecoded = intEncoded - mutator
+            decoded = math.sqrt(intDecoded)
+            buff.append(chr(int(decoded)+1)) #undoing the mutations seems to round everything down. Adding one takes care of that.
         return ''.join(buff)
 
-    def setKey(self,keycode):
-        self.key = keycode
-        self.key = self.key * 97
-    def setPass(self,password):
+    def setPass(self, password):
         self.password = [self.encodeChr(x) for x in password]
         pass
