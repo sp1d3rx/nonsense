@@ -23,6 +23,9 @@ class CodeRing:
         return encMSG
 
     def decodeLine(self, tupleEnc):
+        if type(tupleEnc) == list:
+            print 'found list type'
+            tupleEnc = ','.join(str(x) for x in tupleEnc)
         buff = []
         if self.password == []:
             return "could not decode wihout password"
@@ -39,3 +42,12 @@ class CodeRing:
     def setPass(self, password):
         self.password = [self.encodeChr(x) for x in password]
         pass
+
+if __name__=="__main__":
+    c = CodeRing()
+    c.setPass("HWre0IXm0Juln6vial4ik4xpqKdV7tOOdymXw7BcohwxWFXABogTc8loMbPfWAs")
+    enctuple = c.encodeLine("grapefruits hunted the crazy people furiously quick now")
+    decstring = c.decodeLine(enctuple)
+    print enctuple
+    print decstring
+    
